@@ -10,8 +10,6 @@
 using namespace std;
 // #define endl '\n'
 
-typedef long double ld;
-
 // Using this since relative addressing does not work in my MAC.
 string currentDirPath = "/Users/nizamul/Desktop/Codes/Research/";
 vector<string> dataset = {"DBLP collaboration network and ground-truth communities",
@@ -23,11 +21,11 @@ vector<string> hypergraphs = {"Dataset/com-dblp.all.cmty.txt",
 
 const int MAXN = 6e5;
 const int MAXHE = 8e4;
-const ld epsilon = 1e-9;
+const double epsilon = 1e-9;
 vector<int> graph[MAXN + MAXHE];
 int level[MAXN];
 bitset<MAXN> visited;
-ld farness[MAXN], closeness[MAXN];
+double farness[MAXN], closeness[MAXN];
 
 void bfs(int source){
   queue<int> q;
@@ -84,7 +82,7 @@ int main(){
       // if (j%1000 == 0) printf("%d\n", j);
     }
 
-    ld mx = 0;
+    double mx = 0;
     for (int j = 0; j <= mxn; ++j)
       mx = max(mx, farness[j]);
 
