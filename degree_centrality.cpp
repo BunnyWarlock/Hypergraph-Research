@@ -18,7 +18,7 @@ vector<string> hypergraphs = {"Dataset/com-youtube.all.cmty.txt",
                               "Dataset/com-dblp.all.cmty.txt",
                               "Dataset/com-amazon.all.dedup.cmty.txt"};
 
-const int MAXN = 2e7;
+const int MAXN = 2e6;
 vector<int> degree(MAXN);
 
 int main(){
