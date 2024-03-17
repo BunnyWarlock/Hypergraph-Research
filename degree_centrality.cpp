@@ -39,10 +39,8 @@ int main(){
 
     memset(degree, 0, sizeof(degree));
 
-    int mxn = 0;
-    for (int j = 0; j < edges; ++j){
-      int u, v;
-      fin>>u>>v;
+    int mxn = 0, u, v;
+    while(fin>>u>>v){
       mxn = max(mxn, max(u, v));
       ++degree[u];
       ++degree[v];
@@ -53,11 +51,13 @@ int main(){
       mx = max(mx, degree[j]);
 
     printf("For graph representation:\n");
-    printf("The nodes with the highest degree are ");
+    printf("The node(s) with the highest degree are ");
     for (int j = 0; j <= mxn; ++j)
       if (degree[j] == mx)
         printf("%d, ", j);
     printf("\b\b.\n\n");
+
+    // printf("%d\n", mxn);
 
     fin.close();
 
@@ -82,13 +82,15 @@ int main(){
       mx = max(mx, degree[j]);
 
     printf("For hypergraph representation:\n");
-    printf("The nodes inside the most hyperedges are ");
+    printf("The node(s) inside the most hyperedges are ");
     for (int j = 0; j <= mxn; ++j)
       if (degree[j] == mx)
         printf("%d, ", j);
     printf("\b\b.\n\n");
 
     fin.close();
+
+    // printf("%d\n", mxn);
 
     printf("%s\n", string(80, '=').c_str());
   }
