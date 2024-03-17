@@ -87,9 +87,9 @@ int main(){
         printf("%d, ", j);
     printf("\b\b.\n\n");
 
-    fin.close();
-
     // printf("%d\n", mxn);
+
+    fin.close();
 
     printf("%s\n", string(80, '=').c_str());
   }
