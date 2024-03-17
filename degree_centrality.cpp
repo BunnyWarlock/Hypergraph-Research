@@ -70,7 +70,6 @@ int main(){
     mxn = 0;
     while(getline(fin, line)){
       stringstream buffer(line);
-      int u;
       while(buffer>>u){
         ++degree[u];
         mxn = max(mxn, u);
@@ -88,9 +87,9 @@ int main(){
         printf("%d, ", j);
     printf("\b\b.\n\n");
 
-    // printf("%d\n", mxn);
-
     fin.close();
+
+    // printf("%d\n", mxn);
 
     printf("%s\n", string(80, '=').c_str());
   }
