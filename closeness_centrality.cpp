@@ -126,7 +126,40 @@ int main(){
       ++hyperEdge;
     }
 
-    // Work in Progress!!!
+    memset(farness, 0, sizeof(farness));
+
+    for (int j = 0; j <= mxn; ++j){
+      visited.reset();
+      level[j] = 0;
+      bfs(j);
+      for (int k = 0; k <= mxn; ++k)
+        farness[j] += visited[k]*(level[k]/2);
+      farness[j] /= max(int(visited.count()) - 1, 1);
+      closeness[j] = 1/farness[j];
+
+      // if (j%1000 == 0) printf("%d\n", j);
+    }
+
+    mx = 0;
+    for (int j = 0; j <= mxn; ++j)
+      mx = max(mx, farness[j]);
+
+    printf("For graph representation:\n");
+    printf("The node(s) with the greatest farness are ");
+    for (int j = 0; j <= mxn; ++j)
+      if (abs(mx - farness[j]) < epsilon)
+        printf("%d, ", j);
+    printf("\b\b.\n");
+
+    mx = 0;
+    for (int j = 0; j <= mxn; ++j)
+      mx = max(mx, closeness[j]);
+
+      printf("The node(s) with the greatest closeness are ");
+      for (int j = 0; j <= mxn; ++j)
+        if (abs(mx - closeness[j]) < epsilon)
+          printf("%d, ", j);
+      printf("\b\b.\n\n");
 
     // printf("%d\n", mxn);
 
