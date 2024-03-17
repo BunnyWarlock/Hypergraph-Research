@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstring>
 using namespace std;
 // #define endl '\n'
 
@@ -19,7 +20,7 @@ vector<string> hypergraphs = {"Dataset/com-youtube.all.cmty.txt",
                               "Dataset/com-amazon.all.dedup.cmty.txt"};
 
 const int MAXN = 2e6;
-vector<int> degree(MAXN);
+int degree[MAXN];
 
 int main(){
   ios_base::sync_with_stdio(false);
@@ -36,23 +37,24 @@ int main(){
 
     fin>>nodes>>edges;
 
-    for (int j = 1; j <= nodes; ++j)
-      degree[j] = 0;
+    memset(degree, 0, sizeof(degree));
 
+    int mxn = 0;
     for (int j = 0; j < edges; ++j){
       int u, v;
       fin>>u>>v;
+      mxn = max(mxn, max(u, v));
       ++degree[u];
       ++degree[v];
     }
 
     int mx = 0;
-    for (int j = 1; j <= nodes; ++j)
+    for (int j = 0; j <= mxn; ++j)
       mx = max(mx, degree[j]);
 
     printf("For graph representation:\n");
     printf("The nodes with the highest degree are ");
-    for (int j = 1; j <= nodes; ++j)
+    for (int j = 0; j <= mxn; ++j)
       if (degree[j] == mx)
         printf("%d, ", j);
     printf("\b\b.\n\n");
@@ -62,24 +64,26 @@ int main(){
     // Hypergraph
     fin.open(currentDirPath + hypergraphs[i]);
 
-    for (int j = 1; j <= nodes; ++j)
-      degree[j] = 0;
+    memset(degree, 0, sizeof(degree));
 
     string line;
+    mxn = 0;
     while(getline(fin, line)){
       stringstream buffer(line);
       int u;
-      while(buffer>>u)
+      while(buffer>>u){
         ++degree[u];
+        mxn = max(mxn, u);
+      }
     }
 
     mx = 0;
-    for (int j = 1; j <= nodes; ++j)
+    for (int j = 0; j <= mxn; ++j)
       mx = max(mx, degree[j]);
 
     printf("For hypergraph representation:\n");
     printf("The nodes inside the most hyperedges are ");
-    for (int j = 1; j <= nodes; ++j)
+    for (int j = 0; j <= mxn; ++j)
       if (degree[j] == mx)
         printf("%d, ", j);
     printf("\b\b.\n\n");
