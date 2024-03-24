@@ -108,14 +108,10 @@ int main(){
     for (auto itr1 = hash1.begin(); itr1 != hash1.end(); ){
       auto itr2 = hash2.find(itr1->first);
       ++itr1;
-      if (itr2 == hash2.end()){
-        ++cnt2;
+      if (itr2 == hash2.end())
         continue;
-      }
-      hash1.erase(prev(itr1));
-      hash2.erase(itr2);
 
-      int s1 = graphConnectivity.size(itr1->second);
+      int s1 = graphConnectivity.size(prev(itr1)->second);
       int s2 = hypergraphConnectivity.size(itr2->second);
       if (s1 == s2)
         ++cnt1;
@@ -123,7 +119,11 @@ int main(){
         ++cnt2;
       else
         ++cnt3;
+
+      hash1.erase(prev(itr1));
+      hash2.erase(itr2);
     }
+    cnt2 += hash1.size();
     cnt3 += hash2.size();
 
     printf("The graph representation has %d connected components\n", graphConnectivity.comp);
