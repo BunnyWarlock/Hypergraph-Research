@@ -191,8 +191,6 @@ int main(){
           printf("%d, ", j.first);
       printf("\b\b.\n");
 
-    // printf("%d\n", mxn);
-
     fin.close();
 
 
