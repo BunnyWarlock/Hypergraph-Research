@@ -50,7 +50,7 @@ void bfs(int source){
 }
 
 int main(){
-  // ios_base::sync_with_stdio(false);
+  ios_base::sync_with_stdio(false);
   // cin.tie(NULL);
   // cin.exceptions(cin.failbit);
 
