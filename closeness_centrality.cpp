@@ -4,32 +4,38 @@
 #include <string>
 #include <vector>
 #include <bitset>
-#include <cstring>
 #include <queue>
 #include <cmath>
+#include <map>
 using namespace std;
 // #define endl '\n'
 
 // Using this since relative addressing does not work in my MAC.
 string currentDirPath = "/Users/nizamul/Desktop/Codes/Research/";
-vector<string> dataset = {"DBLP collaboration network and ground-truth communities",
+vector<string> dataset = {"Test Dataset",
+                          "DBLP collaboration network and ground-truth communities",
                           "Amazon product co-purchasing network and ground-truth communities"};
-vector<string> graphs = {"Dataset/com-dblp.ungraph.txt",
+vector<string> graphs = {"Dataset/test.ungraph.txt",
+                        "Dataset/com-dblp.ungraph.txt",
                         "Dataset/com-amazon.ungraph.txt"};
-vector<string> hypergraphs = {"Dataset/com-dblp.all.cmty.txt",
+vector<string> hypergraphs = {"Dataset/test.cmty.txt",
+                              "Dataset/com-dblp.all.cmty.txt",
                               "Dataset/com-amazon.all.dedup.cmty.txt"};
 
-const int MAXN = 6e5;
+const int MAXN = 2e6;
 const int MAXHE = 8e4;
 const double epsilon = 1e-9;
-vector<int> graph[MAXN + MAXHE];
-int level[MAXN];
-bitset<MAXN> visited;
-double farness[MAXN], closeness[MAXN];
+map<int, vector<int>> graph;
+map<int, int> level;
+map<int, double> farness;
+map<int, double> closeness;
+bitset<MAXN + MAXHE> visited;
 
 void bfs(int source){
   queue<int> q;
   q.push(source);
+  visited.reset();
+  level[source] = 0;
   visited[source] = true;
   while(!q.empty()){
     int current_vertex = q.front();
@@ -44,7 +50,7 @@ void bfs(int source){
 }
 
 int main(){
-  ios_base::sync_with_stdio(false);
+  // ios_base::sync_with_stdio(false);
   // cin.tie(NULL);
   // cin.exceptions(cin.failbit);
 
@@ -58,108 +64,132 @@ int main(){
 
     fin>>nodes>>edges;
 
-    for (int j = 0; j < MAXN; ++j)
-      graph[j].clear();
+    graph.clear();
+    farness.clear();
+    closeness.clear();
+    level.clear();
 
-    int mxn = 0, u, v;
+    int u, v;
     while(fin>>u>>v){
-      mxn = max(mxn, max(u, v));
       graph[u].push_back(v);
       graph[v].push_back(u);
     }
 
-    memset(farness, 0, sizeof(farness));
-
-    for (int j = 0; j <= mxn; ++j){
-      visited.reset();
-      level[j] = 0;
+    for (auto& [j, v1]: graph){
       bfs(j);
-      for (int k = 0; k <= mxn; ++k)
+      for (auto& [k, v2]: graph)
         farness[j] += visited[k]*level[k];
       farness[j] /= max(int(visited.count()) - 1, 1);
       closeness[j] = 1/farness[j];
 
-      // if (j%1000 == 0) printf("%d\n", j);
+      // printf("%d\n", j);
     }
 
+    printf("Farness in the graph\n");
+    for (auto& j: farness)
+      printf("%d: %lf\n", j.first, j.second);
+    printf("\n");
+
+    printf("Closeness in the graph\n");
+    for (auto& j: closeness)
+      printf("%d: %lf\n", j.first, j.second);
+    printf("\n");
+
     double mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, farness[j]);
+    for (auto& j: farness)
+      mx = max(mx, j.second);
 
     printf("For graph representation:\n");
     printf("The node(s) with the greatest farness are ");
-    for (int j = 0; j <= mxn; ++j)
-      if (abs(mx - farness[j]) < epsilon)
-        printf("%d, ", j);
+    for (auto& j: farness)
+      if (abs(mx - j.second) < epsilon)
+        printf("%d, ", j.first);
     printf("\b\b.\n");
 
     mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, closeness[j]);
+    for (auto& j: closeness)
+      mx = max(mx, j.second);
 
       printf("The node(s) with the greatest closeness are ");
-      for (int j = 0; j <= mxn; ++j)
-        if (abs(mx - closeness[j]) < epsilon)
-          printf("%d, ", j);
+      for (auto& j: closeness)
+        if (abs(mx - j.second) < epsilon)
+          printf("%d, ", j.first);
       printf("\b\b.\n\n");
 
-    // printf("%d\n", mxn);
-
     fin.close();
+
+
+
+
+
+
+
 
     // Hypergraph
     int hyperEdge = 0;
     fin.open(currentDirPath + hypergraphs[i]);
 
-    for (int j = 0; j < MAXN + MAXHE; ++j)
-      graph[j].clear();
+    graph.clear();
+    farness.clear();
+    closeness.clear();
+    level.clear();
 
     string line;
-    mxn = 0;
     while(getline(fin, line)){
       stringstream buffer(line);
       while(buffer>>u){
         graph[u].push_back(MAXN + hyperEdge);
         graph[MAXN + hyperEdge].push_back(u);
-        mxn = max(mxn, u);
       }
       ++hyperEdge;
     }
 
-    memset(farness, 0, sizeof(farness));
-
-    for (int j = 0; j <= mxn; ++j){
-      visited.reset();
-      level[j] = 0;
+    for (auto& [j, v1]: graph){
+      if (j >= MAXN)
+        continue;
       bfs(j);
-      for (int k = 0; k <= mxn; ++k)
-        farness[j] += visited[k]*(level[k]/2);
-      farness[j] /= max(int(visited.count()) - 1, 1);
+      for (auto& [k, v2]: graph)
+        if (k < MAXN)
+          farness[j] += visited[k]*(level[k]/2);
+      farness[j] /= max(int((visited<<MAXHE).count()) - 1, 1);
       closeness[j] = 1/farness[j];
 
-      // if (j%1000 == 0) printf("%d\n", j);
+      // printf("%d\n", j);
     }
 
+    printf("Farness in the hypergraph\n");
+    for (auto& j: farness)
+      if (j.first < MAXN)
+        printf("%d: %lf\n", j.first, j.second);
+    printf("\n");
+
+    printf("Closeness in the hypergraph\n");
+    for (auto& j: closeness)
+      if (j.first < MAXN)
+        printf("%d: %lf\n", j.first, j.second);
+    printf("\n");
+
     mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, farness[j]);
+    for (auto& j: farness)
+      if (j.first < MAXN)
+        mx = max(mx, j.second);
 
     printf("For graph representation:\n");
     printf("The node(s) with the greatest farness are ");
-    for (int j = 0; j <= mxn; ++j)
-      if (abs(mx - farness[j]) < epsilon)
-        printf("%d, ", j);
+    for (auto& j: farness)
+      if (j.first < MAXN && abs(mx - j.second) < epsilon)
+        printf("%d, ", j.first);
     printf("\b\b.\n");
 
     mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, closeness[j]);
+    for (auto& j: closeness)
+      mx = max(mx, j.second);
 
       printf("The node(s) with the greatest closeness are ");
-      for (int j = 0; j <= mxn; ++j)
-        if (abs(mx - closeness[j]) < epsilon)
-          printf("%d, ", j);
-      printf("\b\b.\n\n");
+      for (auto& j: closeness)
+        if (j.first < MAXN && abs(mx - j.second) < epsilon)
+          printf("%d, ", j.first);
+      printf("\b\b.\n");
 
     // printf("%d\n", mxn);
 
