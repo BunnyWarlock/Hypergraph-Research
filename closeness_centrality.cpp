@@ -13,12 +13,15 @@ using namespace std;
 // Using this since relative addressing does not work in my MAC.
 string currentDirPath = "/Users/nizamul/Desktop/Codes/Research/";
 vector<string> dataset = {"Test Dataset",
+                          "Youtube social network and ground-truth communities",
                           "DBLP collaboration network and ground-truth communities",
                           "Amazon product co-purchasing network and ground-truth communities"};
 vector<string> graphs = {"Dataset/test.ungraph.txt",
+                        "Dataset/com-youtube.ungraph.txt",
                         "Dataset/com-dblp.ungraph.txt",
                         "Dataset/com-amazon.ungraph.txt"};
 vector<string> hypergraphs = {"Dataset/test.cmty.txt",
+                              "Dataset/com-youtube.all.cmty.txt",
                               "Dataset/com-dblp.all.cmty.txt",
                               "Dataset/com-amazon.all.dedup.cmty.txt"};
 
