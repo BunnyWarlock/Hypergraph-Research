@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cstring>
+#include <map>
 using namespace std;
 // #define endl '\n'
 
@@ -19,8 +19,6 @@ vector<string> hypergraphs = {"Dataset/com-youtube.all.cmty.txt",
                               "Dataset/com-dblp.all.cmty.txt",
                               "Dataset/com-amazon.all.dedup.cmty.txt"};
 
-const int MAXN = 2e6;
-int degree[MAXN];
 
 int main(){
   ios_base::sync_with_stdio(false);
@@ -37,57 +35,48 @@ int main(){
 
     fin>>nodes>>edges;
 
-    memset(degree, 0, sizeof(degree));
-
-    int mxn = 0, u, v;
+    int u, v;
+    map<int, int> degree;
     while(fin>>u>>v){
-      mxn = max(mxn, max(u, v));
       ++degree[u];
       ++degree[v];
     }
 
     int mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, degree[j]);
+    for (auto& d: degree)
+      mx = max(mx, d.second);
 
     printf("For graph representation:\n");
     printf("The node(s) with the highest degree are ");
-    for (int j = 0; j <= mxn; ++j)
-      if (degree[j] == mx)
-        printf("%d, ", j);
+    for (auto& d: degree)
+      if (d.second == mx)
+        printf("%d, ", d.first);
     printf("\b\b.\n\n");
-
-    // printf("%d\n", mxn);
 
     fin.close();
 
     // Hypergraph
     fin.open(currentDirPath + hypergraphs[i]);
 
-    memset(degree, 0, sizeof(degree));
+    degree.clear();
 
     string line;
-    mxn = 0;
     while(getline(fin, line)){
       stringstream buffer(line);
-      while(buffer>>u){
+      while(buffer>>u)
         ++degree[u];
-        mxn = max(mxn, u);
-      }
     }
 
     mx = 0;
-    for (int j = 0; j <= mxn; ++j)
-      mx = max(mx, degree[j]);
+    for (auto& d: degree)
+      mx = max(mx, d.second);
 
     printf("For hypergraph representation:\n");
     printf("The node(s) inside the most hyperedges are ");
-    for (int j = 0; j <= mxn; ++j)
-      if (degree[j] == mx)
-        printf("%d, ", j);
+    for (auto& d: degree)
+      if (d.second == mx)
+        printf("%d, ", d.first);
     printf("\b\b.\n\n");
-
-    // printf("%d\n", mxn);
 
     fin.close();
 
